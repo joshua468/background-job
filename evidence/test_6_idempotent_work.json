@@ -2,38 +2,38 @@
   "option_a_send_email": {
     "first": {
       "status": "sent",
-      "messageId": "msg_6f24c3335ec74f77af70fdd74c01a96d"
+      "messageId": "msg_6aac0ecd56a54e4ab00dec10b9507b47"
     },
     "second": {
       "status": "already_sent",
-      "messageId": "msg_6f24c3335ec74f77af70fdd74c01a96d",
-      "sendId": "sid_4e81ab4e-4732"
+      "messageId": "msg_6aac0ecd56a54e4ab00dec10b9507b47",
+      "sendId": "sid_b208a0ab-1e1a"
     }
   },
   "option_b_generate_pdf": {
     "first": {
-      "key": "pdf_job_eac68bf59c414b048ae580388f06e4da",
+      "key": "pdf_job_3b87a544d32a4a7db4a64c3d1bbf150f",
       "size": 33,
       "format": "A4",
-      "generatedAt": "2026-09-25T19:25:35.050Z",
+      "generatedAt": "2026-09-25T19:35:26.082Z",
       "cached": false
     },
     "second": {
-      "key": "pdf_job_eac68bf59c414b048ae580388f06e4da",
+      "key": "pdf_job_3b87a544d32a4a7db4a64c3d1bbf150f",
       "size": 33,
       "format": "A4",
-      "generatedAt": "2026-09-25T19:25:35.050Z",
+      "generatedAt": "2026-09-25T19:35:26.082Z",
       "cached": true
     }
   },
   "option_c_charge_card": {
     "first": {
-      "chargeId": "ch_7d244bee5a3f429ca0391c96c12a6837",
+      "chargeId": "ch_11276adf049b4c4aa9cffc28582877b1",
       "status": "succeeded",
       "deduped": false
     },
     "second": {
-      "chargeId": "ch_7d244bee5a3f429ca0391c96c12a6837",
+      "chargeId": "ch_11276adf049b4c4aa9cffc28582877b1",
       "deduped": true
     },
     "charges_rows": 1
