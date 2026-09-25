@@ -1,0 +1,30 @@
+{
+  "jobs": 20,
+  "claimed_by_worker_A": [
+    "job_d6f2ee34ebc84b1997ad798297c4a47d",
+    "job_ff00aedd9c8b45c6880d2a621d01fc51",
+    "job_551e4fcef0484d8686b886755a8ddf61",
+    "job_d03d643bf1ec4b7988757a9aaa2db1f4",
+    "job_797e15ff220d410fbb13fcc3eb8ef062",
+    "job_b4dbfb6518e54b9da7ffb082fed95f6b",
+    "job_272aed86bee34facb1cde30c69e6d312",
+    "job_6cb38561b9e8460c885cd6a3e4f61587",
+    "job_6bbb6c52e97f494e9baf5d5a78f2886d",
+    "job_a2c945e6a77a44ed9a8ce8d05214ad9a"
+  ],
+  "claimed_by_worker_B": [
+    "job_54214e0b236641aea58f200609a0e564",
+    "job_4d47923d80094a7ead4a1fd277f67ad0",
+    "job_3c58d7f0e4284241818e443d8f4b0060",
+    "job_6950d4eb9bc94032bf441aef9861954f",
+    "job_0f1a5e265f5f45e58e036b00ced0dac3",
+    "job_d84ca030ee974fccbf8ed0135882f2af",
+    "job_7257a6e57f6b4c3485596671747f59c0",
+    "job_627b6a8c5bb24434adc63d0b74b4a415",
+    "job_594c06d10bf547f1ae34b4927a8effdb",
+    "job_177dba2b2cff4bcbb435815cd3f3fbf0"
+  ],
+  "overlap": [],
+  "duplicates": [],
+  "succeeded_count": 20
+}

@@ -1,0 +1,99 @@
+{
+  "first_page": {
+    "jobs": [
+      {
+        "id": "job_713e233eac584a828567c9c8c33e0da1",
+        "type": "always_fails",
+        "status": "dead",
+        "payload": {
+          "message": "boom 2"
+        },
+        "idempotency_key": "t8_key_2",
+        "attempts": 1,
+        "max_attempts": 1,
+        "last_error": "boom 2",
+        "created_at": "2026-09-25T19:25:40.203Z",
+        "started_at": "2026-09-25T19:25:40.467Z",
+        "run_at": "2026-09-25T19:25:40.203Z",
+        "finished_at": "2026-09-25T19:25:41.480Z",
+        "seconds_to_die": 1
+      },
+      {
+        "id": "job_01f856b18cab49b398a6acaa16445ed1",
+        "type": "always_fails",
+        "status": "dead",
+        "payload": {
+          "message": "boom 1"
+        },
+        "idempotency_key": "t8_key_1",
+        "attempts": 1,
+        "max_attempts": 1,
+        "last_error": "boom 1",
+        "created_at": "2026-09-25T19:25:40.197Z",
+        "started_at": "2026-09-25T19:25:40.461Z",
+        "run_at": "2026-09-25T19:25:40.197Z",
+        "finished_at": "2026-09-25T19:25:40.970Z",
+        "seconds_to_die": 1
+      }
+    ],
+    "meta": {
+      "total": 3,
+      "limit": 2,
+      "offset": 0,
+      "has_more": true
+    }
+  },
+  "last_page": {
+    "jobs": [
+      {
+        "id": "job_f73c6cdf5f90460b8c6519a44c5d91d9",
+        "type": "always_fails",
+        "status": "dead",
+        "payload": {
+          "message": "boom 0"
+        },
+        "idempotency_key": "t8_key_0",
+        "attempts": 1,
+        "max_attempts": 1,
+        "last_error": "boom 0",
+        "created_at": "2026-09-25T19:25:39.960Z",
+        "started_at": "2026-09-25T19:25:40.211Z",
+        "run_at": "2026-09-25T19:25:39.960Z",
+        "finished_at": "2026-09-25T19:25:40.916Z",
+        "seconds_to_die": 1
+      }
+    ],
+    "meta": {
+      "total": 3,
+      "limit": 2,
+      "offset": 2,
+      "has_more": false
+    }
+  },
+  "page_past_end": {
+    "status": 200,
+    "body": {
+      "jobs": [],
+      "meta": {
+        "total": 3,
+        "limit": 20,
+        "offset": 980,
+        "has_more": false
+      }
+    },
+    "retryAfter": null
+  },
+  "limit_clamped_to": 100,
+  "negative_limit": {
+    "error": {
+      "code": "INVALID_REQUEST",
+      "message": "limit and offset must be non-negative"
+    }
+  },
+  "non_numeric_limit": {
+    "error": {
+      "code": "INVALID_REQUEST",
+      "message": "limit and offset must be integers"
+    }
+  }
+}

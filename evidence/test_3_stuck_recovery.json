@@ -1,0 +1,67 @@
+{
+  "stuck_timeout_seconds_configured": 3600,
+  "before_kill": {
+    "id": "job_b75057621da44ba9b773edb4c4c8a636",
+    "type": "hang_forever",
+    "payload": {},
+    "status": "processing",
+    "attempts": 0,
+    "max_attempts": 5,
+    "last_error": null,
+    "run_at": "2026-09-25T19:25:23.825Z",
+    "started_at": "2026-09-25T19:25:24.099Z",
+    "finished_at": null,
+    "idempotency_key": "t3_key_1",
+    "created_at": "2026-09-25T19:25:23.825Z",
+    "updated_at": "2026-09-25T19:25:24.099Z"
+  },
+  "after_kill": {
+    "id": "job_b75057621da44ba9b773edb4c4c8a636",
+    "type": "hang_forever",
+    "payload": {},
+    "status": "processing",
+    "attempts": 0,
+    "max_attempts": 5,
+    "last_error": null,
+    "run_at": "2026-09-25T19:25:23.825Z",
+    "started_at": "2026-09-25T19:25:24.099Z",
+    "finished_at": null,
+    "idempotency_key": "t3_key_1",
+    "created_at": "2026-09-25T19:25:23.825Z",
+    "updated_at": "2026-09-25T19:25:24.099Z"
+  },
+  "after_recovery": {
+    "id": "job_b75057621da44ba9b773edb4c4c8a636",
+    "type": "hang_forever",
+    "payload": {},
+    "status": "pending",
+    "attempts": 1,
+    "max_attempts": 5,
+    "last_error": null,
+    "run_at": "2026-09-25T19:25:25.355Z",
+    "started_at": "2026-09-25T19:25:24.099Z",
+    "finished_at": null,
+    "idempotency_key": "t3_key_1",
+    "created_at": "2026-09-25T19:25:23.825Z",
+    "updated_at": "2026-09-25T19:25:25.355Z"
+  },
+  "recovered_count": 1,
+  "final": {
+    "id": "job_b75057621da44ba9b773edb4c4c8a636",
+    "type": "hang_forever",
+    "payload": {},
+    "status": "succeeded",
+    "attempts": 1,
+    "max_attempts": 5,
+    "last_error": null,
+    "run_at": "2026-09-25T19:25:25.355Z",
+    "started_at": "2026-09-25T19:25:25.449Z",
+    "finished_at": "2026-09-25T19:25:25.452Z",
+    "idempotency_key": "t3_key_1",
+    "created_at": "2026-09-25T19:25:23.825Z",
+    "updated_at": "2026-09-25T19:25:25.452Z"
+  },
+  "recovery_log_lines": [
+    "2026-09-25T19:25:25.442Z WARN worker-recovery job_b75057621da44ba9b773edb4c4c8a636 hang_forever Recovered stuck job, was in processing for 1s, now pending (attempt 1)"
+  ]
+}

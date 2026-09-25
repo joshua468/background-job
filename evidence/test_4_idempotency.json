@@ -1,0 +1,92 @@
+{
+  "idempotency_key": "t4_key_6f09a2bdcde04c63b62d84ffb433aa61",
+  "first_request": {
+    "status": 202,
+    "body": {
+      "job_id": "job_d8b210e045d941b08871a72092b8544b",
+      "status": "pending",
+      "created_at": "2026-09-25T19:25:26.319Z"
+    },
+    "retryAfter": null
+  },
+  "second_request_same_key": {
+    "status": 202,
+    "body": {
+      "job_id": "job_d8b210e045d941b08871a72092b8544b",
+      "status": "pending",
+      "created_at": "2026-09-25T19:25:26.319Z"
+    },
+    "retryAfter": null
+  },
+  "third_request_reordered_payload": {
+    "status": 202,
+    "body": {
+      "job_id": "job_d8b210e045d941b08871a72092b8544b",
+      "status": "pending",
+      "created_at": "2026-09-25T19:25:26.319Z"
+    },
+    "retryAfter": null
+  },
+  "same_key_different_payload": {
+    "status": 409,
+    "body": {
+      "error": {
+        "code": "DUPLICATE_IDEMPOTENCY_KEY",
+        "message": "Idempotency key already used with a different payload"
+      }
+    },
+    "retryAfter": null
+  },
+  "missing_type": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "INVALID_REQUEST",
+        "message": "Missing required field: type"
+      }
+    },
+    "retryAfter": null
+  },
+  "missing_key": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "INVALID_REQUEST",
+        "message": "Missing required field: idempotency_key"
+      }
+    },
+    "retryAfter": null
+  },
+  "not_found": {
+    "status": 404,
+    "body": {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "Job not found"
+      }
+    },
+    "retryAfter": null
+  },
+  "rows_with_key": 1,
+  "status_endpoint": {
+    "status": 200,
+    "body": {
+      "job_id": "job_d8b210e045d941b08871a72092b8544b",
+      "type": "send_email",
+      "status": "pending",
+      "attempts": 0,
+      "max_attempts": 5,
+      "last_error": null,
+      "run_at": "2026-09-25T19:25:26.319Z",
+      "started_at": null,
+      "finished_at": null,
+      "created_at": "2026-09-25T19:25:26.319Z",
+      "updated_at": "2026-09-25T19:25:26.319Z"
+    },
+    "retryAfter": null
+  },
+  "view_served": {
+    "status": 200,
+    "content_type": "text/html"
+  }
+}

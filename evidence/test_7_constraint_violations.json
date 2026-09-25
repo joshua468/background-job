@@ -1,0 +1,30 @@
+{
+  "rejected": [
+    {
+      "attempt": "status = 'half_done'",
+      "code": "23514"
+    },
+    {
+      "attempt": "status='succeeded', finished_at=NULL",
+      "code": "23514"
+    },
+    {
+      "attempt": "status='failed', finished_at=NOW()",
+      "code": "23514"
+    },
+    {
+      "attempt": "succeeded -> processing",
+      "code": "23514"
+    },
+    {
+      "attempt": "duplicate idempotency_key",
+      "constraint": "jobs_idempotency_key_key",
+      "code": "23505"
+    }
+  ],
+  "legal_transition_still_works": {
+    "path": "pending -> processing -> failed",
+    "final_status": "failed",
+    "finished_at": null
+  }
+}
