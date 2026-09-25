@@ -1,30 +1,51 @@
 {
   "rejected": [
     {
-      "attempt": "status = 'half_done'",
-      "code": "23514"
+      "case": "INSERT with status='half_done'",
+      "sqlstate": "23514",
+      "guard": "finished_has_timestamps",
+      "message": "new row for relation \"jobs\" violates check constraint \"finished_has_timestamps\""
     },
     {
-      "attempt": "status='succeeded', finished_at=NULL",
-      "code": "23514"
+      "case": "succeeded with finished_at=NULL",
+      "sqlstate": "23514",
+      "guard": "finished_has_timestamps",
+      "message": "new row for relation \"jobs\" violates check constraint \"finished_has_timestamps\""
     },
     {
-      "attempt": "status='failed', finished_at=NOW()",
-      "code": "23514"
+      "case": "failed with finished_at=NOW()",
+      "sqlstate": "23514",
+      "guard": "finished_has_timestamps",
+      "message": "new row for relation \"jobs\" violates check constraint \"finished_has_timestamps\""
     },
     {
-      "attempt": "succeeded -> processing",
-      "code": "23514"
+      "case": "processing with started_at=NULL",
+      "sqlstate": "23514",
+      "guard": "started_at_matches_status",
+      "message": "new row for relation \"jobs\" violates check constraint \"started_at_matches_status\""
     },
     {
-      "attempt": "duplicate idempotency_key",
-      "constraint": "jobs_idempotency_key_key",
-      "code": "23505"
+      "case": "succeeded -> processing",
+      "sqlstate": "23514",
+      "guard": "trg_jobs_status_transition",
+      "message": "illegal job status transition succeeded -> processing for job job_14476d644119424480a92c5404440c9c"
+    },
+    {
+      "case": "dead while attempts remain",
+      "sqlstate": "23514",
+      "guard": "dead_means_exhausted",
+      "message": "new row for relation \"jobs\" violates check constraint \"dead_means_exhausted\""
+    },
+    {
+      "case": "duplicate idempotency_key",
+      "sqlstate": "23505",
+      "guard": "jobs_idempotency_key_key",
+      "message": "duplicate key value violates unique constraint \"jobs_idempotency_key_key\""
     }
   ],
-  "legal_transition_still_works": {
-    "path": "pending -> processing -> failed",
-    "final_status": "failed",
-    "finished_at": null
+  "legal_transitions_still_work": {
+    "path": "pending -> processing -> failed -> processing -> succeeded",
+    "final_status": "succeeded",
+    "finished_at": "2026-09-25T19:52:35.612Z"
   }
 }

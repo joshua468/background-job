@@ -1,6 +1,6 @@
 =================================================================
  Background Jobs System - evidence run
- started 2026-09-25T19:35:39.576Z
+ started 2026-09-25T19:52:37.666Z
 =================================================================
 
 Configuration used for this run:
@@ -14,13 +14,13 @@ Configuration used for this run:
 --- Phase 1: enqueue with no worker running (all jobs stay pending) ---
 [server] [API] Listening on http://localhost:3311
 API is up.
-POST /api/v1/jobs  -> 202 {"job_id":"job_3dcbbece995a404c90235b354679fe98","status":"pending","created_at":"2026-09-25T19:35:41.261Z"}
-POST /api/v1/jobs  -> 202 {"job_id":"job_79ba2959965f4f22aa36d341d568c372","status":"pending","created_at":"2026-09-25T19:35:41.312Z"}
-POST /api/v1/jobs  -> 202 {"job_id":"job_fbc44fbfcdbf4487918bc747dbce703a","status":"pending","created_at":"2026-09-25T19:35:41.323Z"}
-POST /api/v1/jobs  -> 202 {"job_id":"job_fc6ec29b368f443e9b4a9f2c3a64021d","status":"pending","created_at":"2026-09-25T19:35:41.494Z"}
+POST /api/v1/jobs  -> 202 {"job_id":"job_1f1538ce51ba4b0ea2a02d0b95010b89","status":"pending","created_at":"2026-09-25T19:52:38.951Z"}
+POST /api/v1/jobs  -> 202 {"job_id":"job_faf22df181fd4c48b05157a011f7b6ff","status":"pending","created_at":"2026-09-25T19:52:38.990Z"}
+POST /api/v1/jobs  -> 202 {"job_id":"job_47e44fe29ae741a3aa7322dc14060806","status":"pending","created_at":"2026-09-25T19:52:39.193Z"}
+POST /api/v1/jobs  -> 202 {"job_id":"job_2804112518564c039c00d9e51a36bdda","status":"pending","created_at":"2026-09-25T19:52:39.201Z"}
 
 Duplicate idempotency key, identical payload:
-POST /api/v1/jobs  -> 202 {"job_id":"job_3dcbbece995a404c90235b354679fe98","status":"pending","created_at":"2026-09-25T19:35:41.261Z"}
+POST /api/v1/jobs  -> 202 {"job_id":"job_1f1538ce51ba4b0ea2a02d0b95010b89","status":"pending","created_at":"2026-09-25T19:52:38.951Z"}
 same job_id returned? true
 
 Duplicate idempotency key, DIFFERENT payload:
@@ -28,36 +28,36 @@ POST /api/v1/jobs  -> 409 {"error":{"code":"DUPLICATE_IDEMPOTENCY_KEY","message"
 SELECT COUNT(*) FROM jobs WHERE idempotency_key='evidence_succeeded' -> 1
 
 --- Phase 2: start the worker ---
-[worker] [worker-15636] starting: concurrency_cap=2 max_attempts=1 backoff_base=3600s jitter=10% stuck_timeout=86400s cleanup_interval=3600s
-[worker] 2026-09-25T19:35:42.440Z INFO worker-15636 Worker started, concurrency cap: 2
-[worker] 2026-09-25T19:35:42.665Z INFO worker-15636 job_3dcbbece995a404c90235b354679fe98 quick_work Claimed job, attempt 1 of 1
-[worker] 2026-09-25T19:35:42.665Z DEBUG worker-15636 job_3dcbbece995a404c90235b354679fe98 quick_work Executing work
-[worker] 2026-09-25T19:35:42.665Z INFO worker-15636 Concurrent jobs: 1 of 2
-[worker] 2026-09-25T19:35:42.666Z INFO worker-15636 job_3dcbbece995a404c90235b354679fe98 quick_work Work succeeded in 1ms
-[worker] 2026-09-25T19:35:42.814Z INFO worker-15636 job_79ba2959965f4f22aa36d341d568c372 hang_forever Claimed job, attempt 1 of 1
-[worker] 2026-09-25T19:35:42.815Z DEBUG worker-15636 job_79ba2959965f4f22aa36d341d568c372 hang_forever Executing work
-[worker] 2026-09-25T19:35:43.186Z INFO worker-15636 job_3dcbbece995a404c90235b354679fe98 quick_work Marked succeeded, finished_at set (total work 1ms)
-[worker] 2026-09-25T19:35:43.338Z INFO worker-15636 job_fbc44fbfcdbf4487918bc747dbce703a always_fails Claimed job, attempt 1 of 1
-[worker] 2026-09-25T19:35:43.338Z DEBUG worker-15636 job_fbc44fbfcdbf4487918bc747dbce703a always_fails Executing work
-[worker!] 2026-09-25T19:35:43.339Z WARN worker-15636 job_fbc44fbfcdbf4487918bc747dbce703a always_fails Work failed in 1ms: Evidence: dependency is down
-[worker!] 2026-09-25T19:35:43.342Z ERROR worker-15636 job_fbc44fbfcdbf4487918bc747dbce703a always_fails Job dead after 1 attempt, requires manual intervention
-[worker] 2026-09-25T19:35:43.505Z INFO worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Claimed job, attempt 1 of 1
-[worker] 2026-09-25T19:35:43.505Z DEBUG worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Executing work
-[worker!] 2026-09-25T19:35:43.505Z WARN worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Work failed in 0ms: Evidence: will be retried
-[worker!] 2026-09-25T19:35:43.508Z ERROR worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Job dead after 1 attempt, requires manual intervention
+[worker] [worker-5440] starting: concurrency_cap=2 max_attempts=1 backoff_base=3600s jitter=10% stuck_timeout=86400s cleanup_interval=3600s
+[worker] 2026-09-25T19:52:39.720Z INFO worker-5440 Worker started, concurrency cap: 2
+[worker] 2026-09-25T19:52:40.018Z INFO worker-5440 job_1f1538ce51ba4b0ea2a02d0b95010b89 quick_work Claimed job, attempt 1 of 1
+[worker] 2026-09-25T19:52:40.018Z DEBUG worker-5440 job_1f1538ce51ba4b0ea2a02d0b95010b89 quick_work Executing work
+[worker] 2026-09-25T19:52:40.018Z INFO worker-5440 Concurrent jobs: 1 of 2
+[worker] 2026-09-25T19:52:40.018Z INFO worker-5440 job_1f1538ce51ba4b0ea2a02d0b95010b89 quick_work Work succeeded in 0ms
+[worker] 2026-09-25T19:52:40.021Z INFO worker-5440 job_faf22df181fd4c48b05157a011f7b6ff hang_forever Claimed job, attempt 1 of 1
+[worker] 2026-09-25T19:52:40.021Z DEBUG worker-5440 job_faf22df181fd4c48b05157a011f7b6ff hang_forever Executing work
+[worker] 2026-09-25T19:52:40.350Z INFO worker-5440 job_1f1538ce51ba4b0ea2a02d0b95010b89 quick_work Marked succeeded, finished_at set (total work 0ms)
+[worker] 2026-09-25T19:52:40.535Z INFO worker-5440 job_47e44fe29ae741a3aa7322dc14060806 always_fails Claimed job, attempt 1 of 1
+[worker] 2026-09-25T19:52:40.536Z DEBUG worker-5440 job_47e44fe29ae741a3aa7322dc14060806 always_fails Executing work
+[worker!] 2026-09-25T19:52:40.536Z WARN worker-5440 job_47e44fe29ae741a3aa7322dc14060806 always_fails Work failed in 1ms: Evidence: dependency is down
+[worker!] 2026-09-25T19:52:40.542Z ERROR worker-5440 job_47e44fe29ae741a3aa7322dc14060806 always_fails Job dead after 1 attempt, requires manual intervention
+[worker] 2026-09-25T19:52:40.700Z INFO worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Claimed job, attempt 1 of 1
+[worker!] 2026-09-25T19:52:40.700Z WARN worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Work failed in 0ms: Evidence: will be retried
+[worker] 2026-09-25T19:52:40.700Z DEBUG worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Executing work
+[worker!] 2026-09-25T19:52:40.702Z ERROR worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Job dead after 1 attempt, requires manual intervention
 
 Worker has now driven the queue through: succeeded, processing, dead.
 
 --- Phase 3: manually retry ONE dead job (it fails again -> failed) ---
 The other dead job is deliberately left alone so the dead letter queue is populated.
-POST /api/v1/jobs/job_fc6ec29b368f443e9b4a9f2c3a64021d/retry -> 202 {"job_id":"job_fc6ec29b368f443e9b4a9f2c3a64021d","status":"pending","attempts":1,"max_attempts":3}
-[worker] 2026-09-25T19:35:43.875Z INFO worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Claimed job, attempt 2 of 3
-[worker] 2026-09-25T19:35:43.875Z DEBUG worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Executing work
-[worker!] 2026-09-25T19:35:43.876Z WARN worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Work failed in 1ms: Evidence: will be retried
-[worker!] 2026-09-25T19:35:43.878Z WARN worker-15636 job_fc6ec29b368f443e9b4a9f2c3a64021d always_fails Work failed: Evidence: will be retried. Retry queued, attempt 2 of 3, next attempt in 6874.4s (run_at 2026-09-25T21:30:18.242Z)
+POST /api/v1/jobs/job_2804112518564c039c00d9e51a36bdda/retry -> 202 {"job_id":"job_2804112518564c039c00d9e51a36bdda","status":"pending","attempts":1,"max_attempts":3}
+[worker] 2026-09-25T19:52:41.136Z INFO worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Claimed job, attempt 2 of 3
+[worker!] 2026-09-25T19:52:41.136Z WARN worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Work failed in 0ms: Evidence: will be retried
+[worker] 2026-09-25T19:52:41.136Z DEBUG worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Executing work
+[worker!] 2026-09-25T19:52:41.139Z WARN worker-5440 job_2804112518564c039c00d9e51a36bdda always_fails Work failed: Evidence: will be retried. Retry queued, attempt 2 of 3, next attempt in 7431.3s (run_at 2026-09-25T21:56:32.422Z)
 
 --- Phase 4: stop the worker, enqueue one more job (it stays pending) ---
-worker stopped. POST /api/v1/jobs -> 202 {"job_id":"job_aee78916fcf948a0a87696860d686f03","status":"pending","created_at":"2026-09-25T19:35:45.457Z"}
+worker stopped. POST /api/v1/jobs -> 202 {"job_id":"job_1b6bbd2f3c684bdd8c50e94936a9fc1d","status":"pending","created_at":"2026-09-25T19:52:42.848Z"}
 Status counts: dead=1  failed=1  pending=1  processing=1  succeeded=1
 
 Every status in the state machine is present above: true
@@ -65,18 +65,18 @@ Every status in the state machine is present above: true
 JOBS TABLE - all five statuses visible
 id                                    type          status      att  max  last_error                    run_at               started_at           finished_at        
 ------------------------------------  ------------  ----------  ---  ---  ----------------------------  -------------------  -------------------  -------------------
-job_3dcbbece995a404c90235b354679fe98  quick_work    succeeded   0    1    -                             2026-09-25 19:35:41  2026-09-25 19:35:42  2026-09-25 19:35:43
-job_79ba2959965f4f22aa36d341d568c372  hang_forever  processing  0    1    -                             2026-09-25 19:35:41  2026-09-25 19:35:42  -                  
-job_fbc44fbfcdbf4487918bc747dbce703a  always_fails  dead        1    1    Evidence: dependency is down  2026-09-25 19:35:41  2026-09-25 19:35:43  2026-09-25 19:35:43
-job_fc6ec29b368f443e9b4a9f2c3a64021d  always_fails  failed      2    3    Evidence: will be retried     2026-09-25 21:30:18  2026-09-25 19:35:43  -                  
-job_aee78916fcf948a0a87696860d686f03  quick_work    pending     0    1    -                             2026-09-25 19:35:45  -                    -                  
+job_1f1538ce51ba4b0ea2a02d0b95010b89  quick_work    succeeded   0    1    -                             2026-09-25 19:52:38  2026-09-25 19:52:39  2026-09-25 19:52:40
+job_faf22df181fd4c48b05157a011f7b6ff  hang_forever  processing  0    1    -                             2026-09-25 19:52:38  2026-09-25 19:52:40  -                  
+job_47e44fe29ae741a3aa7322dc14060806  always_fails  dead        1    1    Evidence: dependency is down  2026-09-25 19:52:39  2026-09-25 19:52:40  2026-09-25 19:52:40
+job_2804112518564c039c00d9e51a36bdda  always_fails  failed      2    3    Evidence: will be retried     2026-09-25 21:56:32  2026-09-25 19:52:40  -                  
+job_1b6bbd2f3c684bdd8c50e94936a9fc1d  quick_work    pending     0    1    -                             2026-09-25 19:52:42  -                    -                  
 
 --- Dead letter queue ---
 GET /api/v1/jobs/dead -> 200
 {
   "jobs": [
     {
-      "id": "job_fbc44fbfcdbf4487918bc747dbce703a",
+      "id": "job_47e44fe29ae741a3aa7322dc14060806",
       "type": "always_fails",
       "status": "dead",
       "payload": {
@@ -86,11 +86,11 @@ GET /api/v1/jobs/dead -> 200
       "attempts": 1,
       "max_attempts": 1,
       "last_error": "Evidence: dependency is down",
-      "created_at": "2026-09-25T19:35:41.323Z",
-      "started_at": "2026-09-25T19:35:43.187Z",
-      "run_at": "2026-09-25T19:35:41.323Z",
-      "finished_at": "2026-09-25T19:35:43.341Z",
-      "seconds_to_die": 2
+      "created_at": "2026-09-25T19:52:39.193Z",
+      "started_at": "2026-09-25T19:52:40.394Z",
+      "run_at": "2026-09-25T19:52:39.193Z",
+      "finished_at": "2026-09-25T19:52:40.540Z",
+      "seconds_to_die": 1
     }
   ],
   "meta": {
@@ -114,31 +114,31 @@ screenshot this at http://127.0.0.1:3311/ while the demo is running
 A second API on port 3312 is needed because the API stamps max_attempts
 onto the row at enqueue time, so the server must be the one configured for 3.
 [api-fast] [API] Listening on http://localhost:3312
-[worker-fast] [worker-20256] starting: concurrency_cap=1 max_attempts=3 backoff_base=5s jitter=10% stuck_timeout=86400s cleanup_interval=3600s
-[worker-fast] 2026-09-25T19:35:50.561Z INFO worker-20256 Worker started, concurrency cap: 1
-POST /api/v1/jobs -> 202 {"job_id":"job_7d327ad516f1415d910dd51b8022c5a0","status":"pending","created_at":"2026-09-25T19:35:50.668Z"}
+POST /api/v1/jobs -> 202 {"job_id":"job_e690baca9e4b489a82656384d8b4732e","status":"pending","created_at":"2026-09-25T19:52:47.244Z"}
 row was created with max_attempts=3
-[worker-fast] 2026-09-25T19:35:50.840Z INFO worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Claimed job, attempt 1 of 3
-[worker-fast] 2026-09-25T19:35:50.841Z DEBUG worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Executing work
-[worker-fast!] 2026-09-25T19:35:50.841Z WARN worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Work failed in 1ms: Backoff demo
-[worker-fast!] 2026-09-25T19:35:50.847Z WARN worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Work failed: Backoff demo. Retry queued, attempt 1 of 3, next attempt in 4.8s (run_at 2026-09-25T19:35:55.614Z)
-[worker-fast] 2026-09-25T19:35:55.682Z INFO worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Claimed job, attempt 2 of 3
-[worker-fast] 2026-09-25T19:35:55.682Z DEBUG worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Executing work
-[worker-fast!] 2026-09-25T19:35:55.682Z WARN worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Work failed in 0ms: Backoff demo
-[worker-fast!] 2026-09-25T19:35:55.685Z WARN worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Work failed: Backoff demo. Retry queued, attempt 2 of 3, next attempt in 9.6s (run_at 2026-09-25T19:36:05.255Z)
-[worker-fast] 2026-09-25T19:36:05.433Z INFO worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Claimed job, attempt 3 of 3
-[worker-fast] 2026-09-25T19:36:05.433Z DEBUG worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Executing work
-[worker-fast!] 2026-09-25T19:36:05.433Z WARN worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Work failed in 0ms: Backoff demo
-[worker-fast!] 2026-09-25T19:36:05.435Z ERROR worker-20256 job_7d327ad516f1415d910dd51b8022c5a0 always_fails Job dead after 3 attempts, requires manual intervention
+[worker-fast] [worker-6200] starting: concurrency_cap=1 max_attempts=3 backoff_base=5s jitter=10% stuck_timeout=86400s cleanup_interval=3600s
+[worker-fast] 2026-09-25T19:52:48.411Z INFO worker-6200 Worker started, concurrency cap: 1
+[worker-fast] 2026-09-25T19:52:48.829Z INFO worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Claimed job, attempt 1 of 3
+[worker-fast] 2026-09-25T19:52:48.829Z DEBUG worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Executing work
+[worker-fast!] 2026-09-25T19:52:48.831Z WARN worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Work failed in 2ms: Backoff demo
+[worker-fast!] 2026-09-25T19:52:48.835Z WARN worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Work failed: Backoff demo. Retry queued, attempt 1 of 3, next attempt in 4.9s (run_at 2026-09-25T19:52:53.742Z)
+[worker-fast] 2026-09-25T19:52:53.843Z INFO worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Claimed job, attempt 2 of 3
+[worker-fast] 2026-09-25T19:52:53.843Z DEBUG worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Executing work
+[worker-fast!] 2026-09-25T19:52:53.843Z WARN worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Work failed in 0ms: Backoff demo
+[worker-fast!] 2026-09-25T19:52:53.847Z WARN worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Work failed: Backoff demo. Retry queued, attempt 2 of 3, next attempt in 10.4s (run_at 2026-09-25T19:53:04.263Z)
+[worker-fast] 2026-09-25T19:53:04.489Z INFO worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Claimed job, attempt 3 of 3
+[worker-fast] 2026-09-25T19:53:04.489Z DEBUG worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Executing work
+[worker-fast!] 2026-09-25T19:53:04.489Z WARN worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Work failed in 0ms: Backoff demo
+[worker-fast!] 2026-09-25T19:53:04.492Z ERROR worker-6200 job_e690baca9e4b489a82656384d8b4732e always_fails Job dead after 3 attempts, requires manual intervention
 
 Observed state changes:
-  2026-09-25T19:35:50.760Z  pending    attempts=0  run_at=2026-09-25 19:35:50
-  2026-09-25T19:35:50.969Z  failed     attempts=1  run_at=2026-09-25 19:35:55
-  2026-09-25T19:35:55.755Z  failed     attempts=2  run_at=2026-09-25 19:36:05
-  2026-09-25T19:36:05.537Z  dead       attempts=3  run_at=2026-09-25 19:36:05
+  2026-09-25T19:52:47.877Z  pending    attempts=0  run_at=2026-09-25 19:52:47
+  2026-09-25T19:52:48.927Z  failed     attempts=1  run_at=2026-09-25 19:52:53
+  2026-09-25T19:52:53.930Z  failed     attempts=2  run_at=2026-09-25 19:53:04
+  2026-09-25T19:53:04.536Z  dead       attempts=3  run_at=2026-09-25 19:53:04
 
   attempts observed: 1 -> 2 -> 3  (3 executions, one per attempt)
-  backoff delay before each retry (seconds): before attempt 2=4.79  before attempt 3=9.78
+  backoff delay before each retry (seconds): before attempt 2=5.00  before attempt 3=10.61
   ~5s then ~10s: exponential, each one inside +/-10% jitter.
   run_at stops moving once the job is dead, so a dead job is never rescheduled.
 
