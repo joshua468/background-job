@@ -605,8 +605,38 @@ test('Test 6: running the work twice still produces exactly one output', async (
   ]);
 });
 
+/**
+ * Identify which database guard rejected a statement.
+ *
+ * node-postgres populates `error.constraint` for unique violations but not for
+ * check violations, and the transition trigger raises its own message shape, so
+ * both have to be read out of the message text.
+ */
+function describePgError(e) {
+  const check = /violates check constraint "([^"]+)"/.exec(e.message || '');
+  const trigger = /illegal job status transition/.exec(e.message || '');
+  let guard;
+  if (e.constraint) {
+    guard = e.constraint;
+  } else if (check) {
+    guard = check[1];
+  } else if (trigger) {
+    guard = 'trg_jobs_status_transition';
+  } else {
+    guard = null;
+  }
+  return { sqlstate: e.code, guard, message: e.message };
+}
+
 // ---------------------------------------------------------------------------
 // Test 7: The database refuses invalid states
+//
+// Ordering matters here. trg_jobs_status_transition is a BEFORE UPDATE trigger,
+// so it fires before any CHECK constraint is evaluated. A test that jumps
+// straight to an invalid status is therefore rejected by the trigger and never
+// reaches the constraint it appears to be testing. To prove a CHECK constraint
+// actually works, the status transition has to be legal and the CHECK is what
+// has to catch it.
 // ---------------------------------------------------------------------------
 test('Test 7: the database rejects states the application must never produce', async () => {
   const config = testConfig({ JOB_MAX_ATTEMPTS: '3' });
@@ -616,90 +646,128 @@ test('Test 7: the database rejects states the application must never produce', a
   const id = enq.body.job_id;
 
   const violations = [];
+  const expectReject = (label, expectedGuard, expectedSqlstate) => async (sql, params) => {
+    try {
+      await query(sql, params);
+    } catch (e) {
+      const described = describePgError(e);
+      assert.equal(described.guard, expectedGuard,
+        `${label}: expected ${expectedGuard} to reject this, got ${described.guard} (${described.message})`);
+      assert.equal(described.sqlstate, expectedSqlstate);
+      violations.push({ case: label, ...described });
+      return;
+    }
+    assert.fail(`${label}: statement was accepted but should have been rejected`);
+  };
 
-  // 1. A status outside the five defined values.
-  await assert.rejects(
-    () => query("UPDATE jobs SET status='half_done' WHERE id=$1", [id]),
-    (e) => {
-      violations.push({ attempt: "status = 'half_done'", constraint: e.constraint, code: e.code });
-      return e.code === '23514';
-    },
-    'an undefined status must be rejected'
+  // For cases where more than one guard would reject the statement, record
+  // whichever fired first instead of pretending the row isolates one of them.
+  const expectRejectSqlstate = (label, expectedSqlstate) => async (sql, params) => {
+    try {
+      await query(sql, params);
+    } catch (e) {
+      const described = describePgError(e);
+      assert.equal(described.sqlstate, expectedSqlstate,
+        `${label}: expected SQLSTATE ${expectedSqlstate}, got ${described.sqlstate}`);
+      violations.push({ case: label, ...described });
+      return;
+    }
+    assert.fail(`${label}: statement was accepted but should have been rejected`);
+  };
+
+  const insertJob = (over = {}) => query(
+    `INSERT INTO jobs (id,type,payload,status,attempts,max_attempts,idempotency_key,
+                       finished_at,started_at,run_at,created_at,updated_at)
+     VALUES ($1,$2,'{}',$3,$4,$5,$6,$7,$8,NOW(),NOW(),NOW())`,
+    [over.id, over.type || 'quick_work', over.status || 'pending', over.attempts ?? 0,
+     over.max_attempts ?? 3, over.key || `t7_${guid()}`, over.finished_at ?? null,
+     over.started_at ?? null]
   );
 
-  // 2. A terminal status with no finished_at.
-  await assert.rejects(
-    () => query("UPDATE jobs SET status='succeeded', finished_at=NULL WHERE id=$1", [id]),
-    (e) => {
-      violations.push({ attempt: "status='succeeded', finished_at=NULL", constraint: e.constraint, code: e.code });
-      return e.code === '23514';
-    },
-    'a succeeded job with no finished_at must be rejected'
+  // 1. An undefined status. Both valid_status and finished_has_timestamps
+  //    reject this row, and PostgreSQL reports the first one it evaluates, so
+  //    this case records the guard that actually fired rather than asserting an
+  //    isolation that does not exist. valid_status is kept in the schema as
+  //    defence in depth and to make the allowed set readable in one place.
+  await expectRejectSqlstate("INSERT with status='half_done'", '23514')(
+    `INSERT INTO jobs (id,type,payload,status,attempts,max_attempts,idempotency_key,run_at,created_at,updated_at)
+     VALUES ($1,'quick_work','{}','half_done',0,3,$2,NOW(),NOW(),NOW())`,
+    [`job_${guid()}`, `t7_bad_${guid()}`]
   );
 
-  // 3. A retryable failure carrying a finished_at, which is the exact bug that
-  //    made the original failure path throw.
-  await assert.rejects(
-    () => query("UPDATE jobs SET status='failed', finished_at=NOW() WHERE id=$1", [id]),
-    (e) => {
-      violations.push({ attempt: "status='failed', finished_at=NOW()", constraint: e.constraint, code: e.code });
-      return e.code === '23514';
-    },
-    'a retryable failure must not be marked finished'
-  );
-
-  // 4. Going back from a terminal state. A CHECK constraint cannot see the row
-  //    it replaced, which is why this needs the transition trigger.
-  await query(
-    `INSERT INTO jobs (id,type,payload,status,attempts,max_attempts,idempotency_key,finished_at,run_at,created_at,updated_at)
-     VALUES ($1,'quick_work','{}','succeeded',1,3,$2,NOW(),NOW(),NOW(),NOW())`,
-    [`job_${guid()}`, `t7_terminal_${guid()}`]
-  );
-  const terminal = (await query("SELECT id FROM jobs WHERE status='succeeded' LIMIT 1")).rows[0];
-  await assert.rejects(
-    () => query("UPDATE jobs SET status='processing' WHERE id=$1", [terminal.id]),
-    (e) => {
-      violations.push({ attempt: "succeeded -> processing", constraint: e.constraint, code: e.code });
-      return e.code === '23514';
-    },
-    'a succeeded job must not be re-claimed'
-  );
-
-  // 5. A duplicate idempotency key, which the UNIQUE constraint owns.
-  const existingKey = (await query('SELECT idempotency_key FROM jobs WHERE id=$1', [id])).rows[0].idempotency_key;
-  await assert.rejects(
-    () => query(
-      `INSERT INTO jobs (id,type,payload,status,attempts,max_attempts,idempotency_key,run_at,created_at,updated_at)
-       VALUES ($1,'quick_work','{}','pending',0,3,$2,NOW(),NOW(),NOW())`,
-      [`job_${guid()}`, existingKey]
-    ),
-    (e) => {
-      violations.push({ attempt: 'duplicate idempotency_key', constraint: e.constraint, code: e.code });
-      return e.code === '23505';
-    },
-    'a duplicate idempotency key must be rejected'
-  );
-
-  // The legitimate transitions still work, so the guard is not simply too strict.
+  // 2. finished_has_timestamps: pending -> processing -> succeeded is a legal
+  //    transition, so only the missing finished_at can reject it.
   await query("UPDATE jobs SET status='processing', started_at=NOW() WHERE id=$1", [id]);
-  await query("UPDATE jobs SET status='failed', last_error='transient' WHERE id=$1", [id]);
-  const afterLegal = (await query('SELECT * FROM jobs WHERE id=$1', [id])).rows[0];
+  await expectReject('succeeded with finished_at=NULL', 'finished_has_timestamps', '23514')(
+    "UPDATE jobs SET status='succeeded', finished_at=NULL WHERE id=$1", [id]
+  );
+
+  // 3. finished_has_timestamps, and the exact bug that broke the original
+  //    failure path: a retryable failure must not be marked finished.
+  const retryable = `job_${guid()}`;
+  await insertJob({ id: retryable });
+  await query("UPDATE jobs SET status='processing', started_at=NOW() WHERE id=$1", [retryable]);
+  await expectReject('failed with finished_at=NOW()', 'finished_has_timestamps', '23514')(
+    "UPDATE jobs SET status='failed', finished_at=NOW() WHERE id=$1", [retryable]
+  );
+
+  // 4. started_at_matches_status: claiming a job without recording when.
+  const unstarted = `job_${guid()}`;
+  await insertJob({ id: unstarted });
+  await expectReject('processing with started_at=NULL', 'started_at_matches_status', '23514')(
+    "UPDATE jobs SET status='processing', started_at=NULL WHERE id=$1", [unstarted]
+  );
+
+  // 5. The transition trigger: a succeeded job must not be re-claimed. No CHECK
+  //    constraint can catch this, because each row is valid in isolation.
+  const done = `job_${guid()}`;
+  await insertJob({ id: done, status: 'succeeded', attempts: 1, finished_at: new Date() });
+  await expectReject('succeeded -> processing', 'trg_jobs_status_transition', '23514')(
+    'UPDATE jobs SET status=$2, started_at=NOW() WHERE id=$1', [done, 'processing']
+  );
+
+  // 6. dead_means_exhausted: a job cannot die while attempts remain. The
+  //    transition into dead is legal, so only this CHECK can catch it.
+  await expectReject('dead while attempts remain', 'dead_means_exhausted', '23514')(
+    "UPDATE jobs SET status='dead', finished_at=NOW(), attempts=1 WHERE id=$1", [id]
+  );
+
+  // 7. UNIQUE on idempotency_key, the constraint that owns duplicate prevention.
+  await expectReject('duplicate idempotency_key', 'jobs_idempotency_key_key', '23505')(
+    `INSERT INTO jobs (id,type,payload,status,attempts,max_attempts,idempotency_key,run_at,created_at,updated_at)
+     VALUES ($1,'quick_work','{}','pending',0,3,$2,NOW(),NOW(),NOW())`,
+    [`job_${guid()}`, (await query('SELECT idempotency_key FROM jobs WHERE id=$1', [id])).rows[0].idempotency_key]
+  );
+
+  // The legal path must still work, or the guards are simply too strict.
+  const legal = (await query('SELECT id FROM jobs WHERE status=$1 LIMIT 1', ['pending'])).rows[0].id;
+  await query("UPDATE jobs SET status='processing', started_at=NOW() WHERE id=$1", [legal]);
+  await query("UPDATE jobs SET status='failed', last_error='transient' WHERE id=$1", [legal]);
+  const afterLegal = (await query('SELECT * FROM jobs WHERE id=$1', [legal])).rows[0];
   assert.equal(afterLegal.status, 'failed', 'pending -> processing -> failed is allowed');
-  assert.equal(afterLegal.finished_at, null, 'and failed carries no finished_at');
+  assert.equal(afterLegal.finished_at, null, 'and a failed job carries no finished_at');
+  await query(
+    "UPDATE jobs SET status='processing', started_at=NOW() WHERE id=$1 AND status='failed'", [legal]
+  );
+  await query("UPDATE jobs SET status='succeeded', finished_at=NOW() WHERE id=$1", [legal]);
+  const afterSuccess = (await query('SELECT * FROM jobs WHERE id=$1', [legal])).rows[0];
+  assert.equal(afterSuccess.status, 'succeeded', 'failed -> processing -> succeeded is allowed');
+  assert.ok(afterSuccess.finished_at, 'a succeeded job carries finished_at');
 
   await writeEvidence('test_7_constraint_violations.json', JSON.stringify({
     rejected: violations,
-    legal_transition_still_works: {
-      path: 'pending -> processing -> failed',
-      final_status: afterLegal.status,
-      finished_at: afterLegal.finished_at,
+    legal_transitions_still_work: {
+      path: 'pending -> processing -> failed -> processing -> succeeded',
+      final_status: afterSuccess.status,
+      finished_at: afterSuccess.finished_at,
     },
   }, null, 2));
 
   consoleBlock('Test 7 evidence: database refuses invalid states', [
-    ...violations.map((v, i) => `${i + 1}. ${v.attempt.padEnd(36)} rejected by ${v.constraint} (SQLSTATE ${v.code})`),
+    ...violations.map((v, i) =>
+      `${i + 1}. ${v.case.padEnd(34)} rejected by ${String(v.guard).padEnd(30)} (SQLSTATE ${v.sqlstate})`),
     '',
-    'legal path still permitted: pending -> processing -> failed, finished_at = ' + afterLegal.finished_at,
+    'legal path still permitted: pending -> processing -> failed -> processing -> succeeded',
   ]);
 });
 

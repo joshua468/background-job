@@ -44,6 +44,12 @@ CREATE INDEX IF NOT EXISTS idx_jobs_dead_finished_at
 -- ---------------------------------------------------------------------------
 
 -- Only the five defined statuses may ever be stored.
+--
+-- Note: this is redundant with finished_has_timestamps, which enumerates the same
+-- five values and is evaluated first, so an unknown status is always reported as
+-- a finished_has_timestamps violation. It is kept because it states the allowed
+-- set in one readable place and stays meaningful if the other constraint is ever
+-- loosened to only enforce the terminal side of the rule.
 ALTER TABLE jobs DROP CONSTRAINT IF EXISTS valid_status;
 ALTER TABLE jobs ADD CONSTRAINT valid_status
   CHECK (status IN ('pending', 'processing', 'succeeded', 'failed', 'dead'));
@@ -54,6 +60,10 @@ ALTER TABLE jobs ADD CONSTRAINT valid_status
 -- "this attempt threw, a retry is scheduled", so a failed job must have no
 -- finished_at yet. This is enforced in both directions so neither a finished
 -- job missing its timestamp nor an in-flight job carrying one can exist.
+--
+-- This is the constraint the task's own CHECK omits: the brief's version lists
+-- only the terminal half, which would let a retryable 'failed' row carry a
+-- finished_at. That is the bug that made the original failure path throw.
 ALTER TABLE jobs DROP CONSTRAINT IF EXISTS finished_has_timestamps;
 ALTER TABLE jobs ADD CONSTRAINT finished_has_timestamps
   CHECK (
@@ -96,6 +106,12 @@ ALTER TABLE jobs ADD CONSTRAINT dead_means_exhausted
 -- A CHECK constraint can validate a row but cannot see the row it is replacing.
 -- Transitions need a trigger, so the database - not the application - is what
 -- guarantees a job cannot go from succeeded back to processing.
+--
+-- Consequence for testing: this is a BEFORE UPDATE trigger, so it runs before
+-- any CHECK constraint is evaluated. Jumping straight to a disallowed status is
+-- therefore always reported as a transition violation and never reaches the
+-- constraint it looks like it is exercising. To prove a CHECK works, the
+-- transition has to be legal first and the CHECK has to be what catches it.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION jobs_enforce_status_transition()
 RETURNS TRIGGER AS $$

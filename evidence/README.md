@@ -32,7 +32,7 @@ What is captured is what actually ships.
 | `test_4_idempotency.json` | `npm test` | Two identical submissions returning one `job_id`, reordered payload matching, 409 on conflict, row count of 1 |
 | `test_5_two_workers.json` | `npm test` | Which worker claimed which job, and the empty overlap set |
 | `test_6_idempotent_work.json` | `npm test` | Both runs of all three handlers, showing one output each |
-| `test_7_constraint_violations.json` | `npm test` | Five rejected invalid states with the constraint that rejected each |
+| `test_7_constraint_violations.json` | `npm test` | Seven rejected invalid states, each naming the guard that rejected it |
 | `test_8_dead_letter_paging.json` | `npm test` | Paging past the end, limit clamping, negative and non-numeric limits |
 
 ## How the all-status table is produced

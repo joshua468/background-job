@@ -213,6 +213,21 @@ satisfied. That needs a trigger, and there is one
 (`trg_jobs_status_transition`) with an explicit transition table. Test 7 proves
 the re-claim is rejected.
 
+**Being a `BEFORE UPDATE` trigger has a consequence worth knowing: it decides
+which constraint gets to report the error.** The transition trigger runs before
+any `CHECK` is evaluated, so a statement that jumps straight to a disallowed
+status is *always* reported as a transition violation and never reaches the
+column constraint it appears to be exercising. My first version of Test 7 made
+exactly that mistake and so appeared to prove `finished_has_timestamps` worked
+when it had never actually been evaluated. Each case now makes a **legal**
+transition first, so the constraint under test is the only thing that can reject
+it. Two more honest findings came out of that rewrite: `valid_status` is
+redundant with `finished_has_timestamps` and can never be the one to fire, and
+node-postgres does not populate `error.constraint` for check violations at all,
+so the guard name has to be parsed out of the message. The old evidence files
+were quietly missing that field entirely, because `JSON.stringify` drops
+`undefined` rather than erroring.
+
 **Work must be idempotent because at-least-once is the only thing available.**
 A worker can finish the work and die before writing `succeeded`. There is no
 atomic way to commit an external side effect and a database row together, so the
