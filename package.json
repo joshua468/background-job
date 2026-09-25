@@ -1,0 +1,26 @@
+{
+  "name": "background-jobs-system",
+  "version": "1.0.0",
+  "description": "Production job queue: enqueue in request handler (202), execute in a separate worker process, with exponential backoff and a dead letter queue.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "migrate": "node src/db/migrate.js",
+    "server": "node src/server.js",
+    "worker": "node src/worker/main.js",
+    "start": "node src/worker/main.js",
+    "test": "node --test",
+    "test:evidence": "node --test 2>&1 | tee test-results.log",
+    "evidence": "node scripts/produce-evidence.js",
+    "verify": "node src/db/migrate.js && node --test && node scripts/produce-evidence.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,8 @@
+node_modules/
+.env
+*.log
+test-results.log
+test-out.log
+test-err.log
+data/
+.DS_Store
