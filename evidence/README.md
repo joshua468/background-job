@@ -50,11 +50,40 @@ No rows are inserted by hand. The run walks the system through every state:
 The first `always_fails` job is deliberately left dead so the dead letter queue
 has something in it.
 
-## Screenshots still to take
+## Screenshots
 
-These need a human with a screen; the text artefacts above are what they should
-be compared against.
+These are generated rather than taken by hand:
 
-1. `curl` output against the live API showing a paginated dead letter response.
-2. The dead letter view in a browser with at least one job and its Retry button.
-3. The jobs table with every status, from any Postgres client.
+```bash
+npm run evidence     # runs the suite and writes the JSON artefacts
+npm run screenshots  # renders evidence/screenshots/*.png from them
+```
+
+`npm run screenshots` drives a real server and worker, then asserts on the text
+it reads back out of every rendered page, so a capture that silently renders the
+wrong thing fails instead of exiting 0. Set `SHOT_DEBUG=1` to see the worker and
+server logs while it runs.
+
+| File | What it shows |
+|------|---------------|
+| `01-concurrency-cap.png` | Every in-flight sample from 50 jobs at a cap of 5, none above the cap |
+| `02-exhaustion-to-dead.png` | Attempts climbing to `max_attempts`, growing backoff gaps, then `dead` |
+| `03-stuck-recovery.png` | The same job before the kill, after the kill, after the sweep, after re-running |
+| `04-idempotency-key.png` | Two identical submissions returning one job id, one row, and a 409 on a changed payload |
+| `05-two-workers-no-collision.png` | Both workers' claim lists with no overlap and every job succeeded once |
+| `06-dead-letter-queue-ui.png` | The console's dead letter view, with Retry, over two job types |
+| `07-dead-letter-queue-api.png` | The real `GET /api/v1/jobs/dead` body |
+| `08-all-statuses.png` | One jobs table with `pending`, `processing`, `succeeded`, `failed` and `dead` all visible at once |
+
+Two of these deserve a note.
+
+`08-all-statuses.png` exists because a `failed` row only exists inside a
+backoff window, so no test artefact ever recorded one. The capture therefore
+drives real jobs into all five states and then reads the table back out of the
+database, rather than rendering a summary. The rows in that image are the
+genuine result of the `SELECT` printed above them.
+
+`07` is rendered from the response body that was actually fetched. The obvious
+approach — screenshot the API URL — does not work, because Chrome's JSON viewer
+reformats whitespace and leaves no stable string to assert against.
+

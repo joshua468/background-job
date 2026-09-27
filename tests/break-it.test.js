@@ -115,23 +115,32 @@ test('Test 1: 50 jobs never exceed the concurrency cap of 5', async () => {
   );
   assert.ok(maxConcurrent > 1, 'the cap should actually be reached, not trivially serial');
 
-  // The heartbeat lines are the log evidence a reviewer reads.
+  // The heartbeat lines are corroborating telemetry. The heartbeat fires on a
+  // timer, so on a short run it can legitimately land during ramp-up or drain
+  // and never catch a moment at the cap. The per-claim samples above are the
+  // deterministic proof, because every claim is recorded.
   const heartbeats = logLines.filter((l) => l.includes('Concurrent jobs:'));
+  const cap = 5;
+  const samplesAboveCap = concurrentSamples.filter((n) => n > cap);
+  const capReached = concurrentSamples.includes(cap);
 
   await writeEvidence('test_1_concurrency.json', JSON.stringify({
-    cap: 5,
+    cap,
     jobs_enqueued: JOB_COUNT,
     max_concurrent_observed: maxConcurrent,
+    cap_reached: capReached,
+    samples_above_cap: samplesAboveCap.length,
     concurrent_samples: concurrentSamples,
     concurrency_heartbeat_log_lines: heartbeats,
     succeeded: succeeded.rows[0].c,
   }, null, 2));
 
   consoleBlock('Test 1 evidence: concurrency cap', [
-    `cap = 5, jobs enqueued = ${JOB_COUNT}, max concurrent observed = ${maxConcurrent}`,
+    `cap = ${cap}, jobs enqueued = ${JOB_COUNT}, max concurrent observed = ${maxConcurrent}`,
+    `cap reached: ${capReached}, samples above cap: ${samplesAboveCap.length}`,
     `samples: ${JSON.stringify(concurrentSamples)}`,
     '',
-    'log lines proving the cap:',
+    'log lines corroborating the cap (timer-driven, so may miss the peak):',
     ...(heartbeats.length ? heartbeats : ['(no heartbeat captured)']),
   ]);
 
@@ -818,6 +827,51 @@ test('Test 8: dead letter queue pages past the end return an empty page, not an 
   const nonNumeric = await listDead(server.baseUrl, '?limit=abc');
   assert.equal(nonNumeric.status, 400);
 
+  // -------------------------------------------------------------------------
+  // Type filter, server-side.
+  //
+  // The console originally filtered by type in the browser, which only ever saw
+  // the rows on the current page. A filtered search that silently ignores
+  // page 2 is worse than no filter, because it reports "no matches" for a job
+  // that is sitting right there. So the filter has to be in SQL, and the count
+  // has to be the filtered count.
+  // -------------------------------------------------------------------------
+  for (let i = 0; i < 4; i++) {
+    await enqueue(server.baseUrl, 'generate_pdf', { doc: `d${i}` }, `t8_pdf_${i}`);
+  }
+  await pollUntil(async () => {
+    const res = await query("SELECT COUNT(*)::int AS c FROM jobs WHERE status='dead'");
+    return res.rows[0].c === 7;
+  }, 30000, 200, 'seven dead jobs');
+
+  const filtered = await listDead(server.baseUrl, '?type=generate_pdf');
+  assert.equal(filtered.status, 200);
+  assert.equal(filtered.body.meta.total, 4, 'total counts only the filtered rows');
+  assert.equal(filtered.body.jobs.length, 4);
+  assert.ok(
+    filtered.body.jobs.every((j) => j.type === 'generate_pdf'),
+    'no row of another type leaks through the filter'
+  );
+  assert.equal(filtered.body.meta.type, 'generate_pdf', 'the applied filter is echoed back');
+
+  // The bug the server-side filter exists to prevent: with a page smaller than
+  // the match set, the filter must still find rows on the second page.
+  const filteredPage2 = await listDead(server.baseUrl, '?type=generate_pdf&limit=2&offset=2');
+  assert.equal(filteredPage2.body.jobs.length, 2, 'the filter reaches past the first page');
+  assert.equal(filteredPage2.body.meta.total, 4, 'and the total is not the page size');
+  assert.equal(filteredPage2.body.meta.has_more, false);
+
+  // A filter matching nothing is an empty result, not an error.
+  const noMatch = await listDead(server.baseUrl, '?type=no_such_type');
+  assert.equal(noMatch.status, 200);
+  assert.deepEqual(noMatch.body.jobs, []);
+  assert.equal(noMatch.body.meta.total, 0);
+  assert.equal(noMatch.body.meta.has_more, false);
+
+  // The unfiltered view is unaffected by any of the above.
+  const unfiltered = await listDead(server.baseUrl, '');
+  assert.equal(unfiltered.body.meta.total, 7, 'filtering does not mutate the collection');
+
   await writeEvidence('test_8_dead_letter_paging.json', JSON.stringify({
     first_page: firstPage.body,
     last_page: lastPage.body,
@@ -825,6 +879,14 @@ test('Test 8: dead letter queue pages past the end return an empty page, not an 
     limit_clamped_to: clamped.body.meta.limit,
     negative_limit: negative.body,
     non_numeric_limit: nonNumeric.body,
+    type_filter: {
+      applied: filtered.body.meta.type,
+      matched: filtered.body.meta.total,
+      all_of_the_filtered_type: filtered.body.jobs.every((j) => j.type === 'generate_pdf'),
+      second_page_reachable: filteredPage2.body.jobs.length,
+      no_match: noMatch.body,
+      unfiltered_total_unchanged: unfiltered.body.meta.total,
+    },
   }, null, 2));
 
   consoleBlock('Test 8 evidence: dead letter paging', [
@@ -833,5 +895,11 @@ test('Test 8: dead letter queue pages past the end return an empty page, not an 
     'page 50 (limit=20 offset=980): HTTP ' + past.status + ', jobs=' + JSON.stringify(past.body.jobs) + ', has_more=' + past.body.meta.has_more,
     'limit=5000 clamped to: ' + clamped.body.meta.limit,
     'limit=-1 -> HTTP ' + negative.status + ' ' + negative.body.error.code,
+    '',
+    'type filter (server-side):',
+    '  type=generate_pdf -> total ' + filtered.body.meta.total + ', all matched: ' + filtered.body.jobs.every((j) => j.type === 'generate_pdf'),
+    '  limit=2&offset=2 -> ' + filteredPage2.body.jobs.length + ' jobs, so the filter is not limited to page 1',
+    '  type=no_such_type -> HTTP ' + noMatch.status + ', ' + noMatch.body.jobs.length + ' jobs, has_more=' + noMatch.body.meta.has_more,
+    '  unfiltered total still ' + unfiltered.body.meta.total,
   ]);
 });

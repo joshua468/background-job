@@ -144,23 +144,36 @@ export function buildApp({ db, config }) {
     const limit = Math.min(rawLimit, 100);
     const offset = rawOffset;
 
+    // Optional server-side type filter. Filtering in the browser would only ever
+    // see the current page, which reads as "no matches" when the job is really
+    // sitting on page 2.
+    const type = typeof req.query.type === 'string' ? req.query.type.trim() : '';
+    const where = type ? "WHERE status = 'dead' AND type = $1" : "WHERE status = 'dead'";
+    const params = type ? [type] : [];
+
     try {
       const countResult = await db.query(
-        "SELECT COUNT(*)::int AS count FROM jobs WHERE status = 'dead'"
+        `SELECT COUNT(*)::int AS count FROM jobs ${where}`, params
       );
       const total = countResult.rows[0].count;
 
       const rows = await db.query(
         `SELECT * FROM jobs
-         WHERE status = 'dead'
+         ${where}
          ORDER BY finished_at DESC
-         LIMIT $1 OFFSET $2`,
-        [limit, offset]
+         LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+        [...params, limit, offset]
       );
 
       return res.json({
         jobs: rows.rows.map(serializeDeadLetter),
-        meta: { total, limit, offset, has_more: offset + limit < total },
+        meta: {
+          total,
+          limit,
+          offset,
+          has_more: offset + limit < total,
+          ...(type ? { type } : {}),
+        },
       });
     } catch (error) {
       return err(res, 500, 'DATABASE_ERROR', error.message);

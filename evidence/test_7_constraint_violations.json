@@ -28,7 +28,7 @@
       "case": "succeeded -> processing",
       "sqlstate": "23514",
       "guard": "trg_jobs_status_transition",
-      "message": "illegal job status transition succeeded -> processing for job job_14476d644119424480a92c5404440c9c"
+      "message": "illegal job status transition succeeded -> processing for job job_7a0fce24046b439797f328f3546ff30d"
     },
     {
       "case": "dead while attempts remain",
@@ -46,6 +46,6 @@
   "legal_transitions_still_work": {
     "path": "pending -> processing -> failed -> processing -> succeeded",
     "final_status": "succeeded",
-    "finished_at": "2026-09-25T19:52:35.612Z"
+    "finished_at": "2026-09-27T14:40:54.296Z"
   }
 }

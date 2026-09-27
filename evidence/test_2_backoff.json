@@ -6,61 +6,61 @@
   },
   "claims": [
     {
-      "at": 1790365931543,
+      "at": 1790519996982,
       "attempt": 1,
       "status_before": "processing"
     },
     {
-      "at": 1790365936811,
+      "at": 1790520002313,
       "attempt": 2,
       "status_before": "processing"
     },
     {
-      "at": 1790365946604,
+      "at": 1790520012490,
       "attempt": 3,
       "status_before": "processing"
     }
   ],
   "failures": [
     {
-      "at": 1790365931548,
+      "at": 1790519996988,
       "status": "failed",
       "attempts": 1,
-      "run_at": "2026-09-25T19:52:16.637Z",
+      "run_at": "2026-09-27T14:40:02.099Z",
       "last_error": "Simulated permanent failure"
     },
     {
-      "at": 1790365936815,
+      "at": 1790520002318,
       "status": "failed",
       "attempts": 2,
-      "run_at": "2026-09-25T19:52:26.475Z",
+      "run_at": "2026-09-27T14:40:12.339Z",
       "last_error": "Simulated permanent failure"
     },
     {
-      "at": 1790365946606,
+      "at": 1790520012493,
       "status": "dead",
       "attempts": 3,
-      "run_at": "2026-09-25T19:52:26.475Z",
+      "run_at": "2026-09-27T14:40:12.339Z",
       "last_error": "Simulated permanent failure"
     }
   ],
   "backoff_gaps_seconds": [
-    5.268,
-    9.793
+    5.331,
+    10.177
   ],
   "run_at_per_failure": [
-    "2026-09-25T19:52:16.637Z",
-    "2026-09-25T19:52:26.475Z",
-    "2026-09-25T19:52:26.475Z"
+    "2026-09-27T14:40:02.099Z",
+    "2026-09-27T14:40:12.339Z",
+    "2026-09-27T14:40:12.339Z"
   ],
   "timeline": [
     "T+0      pending    attempts=0",
     "T+5.3s   processing (attempt 2)   <- after ~5s backoff",
-    "T+15.1s   processing (attempt 3)   <- after ~10s backoff",
-    "T+15.1s   dead        attempts=3    <- retries exhausted"
+    "T+15.5s   processing (attempt 3)   <- after ~10s backoff",
+    "T+15.5s   dead        attempts=3    <- retries exhausted"
   ],
   "dead_row": {
-    "id": "job_cee72812be4e4ed1bc5046f60add4ab8",
+    "id": "job_e9b0672a46034c8bbc51857e25af07ea",
     "type": "always_fails",
     "payload": {
       "message": "Simulated permanent failure"
@@ -69,17 +69,17 @@
     "attempts": 3,
     "max_attempts": 3,
     "last_error": "Simulated permanent failure",
-    "run_at": "2026-09-25T19:52:26.475Z",
-    "started_at": "2026-09-25T19:52:26.585Z",
-    "finished_at": "2026-09-25T19:52:26.605Z",
+    "run_at": "2026-09-27T14:40:12.339Z",
+    "started_at": "2026-09-27T14:40:12.387Z",
+    "finished_at": "2026-09-27T14:40:12.491Z",
     "idempotency_key": "t2_key_1",
-    "created_at": "2026-09-25T19:52:11.399Z",
-    "updated_at": "2026-09-25T19:52:26.605Z"
+    "created_at": "2026-09-27T14:39:56.973Z",
+    "updated_at": "2026-09-27T14:40:12.491Z"
   },
   "dead_letter_response": {
     "jobs": [
       {
-        "id": "job_cee72812be4e4ed1bc5046f60add4ab8",
+        "id": "job_e9b0672a46034c8bbc51857e25af07ea",
         "type": "always_fails",
         "status": "dead",
         "payload": {
@@ -89,11 +89,11 @@
         "attempts": 3,
         "max_attempts": 3,
         "last_error": "Simulated permanent failure",
-        "created_at": "2026-09-25T19:52:11.399Z",
-        "started_at": "2026-09-25T19:52:26.585Z",
-        "run_at": "2026-09-25T19:52:26.475Z",
-        "finished_at": "2026-09-25T19:52:26.605Z",
-        "seconds_to_die": 15
+        "created_at": "2026-09-27T14:39:56.973Z",
+        "started_at": "2026-09-27T14:40:12.387Z",
+        "run_at": "2026-09-27T14:40:12.339Z",
+        "finished_at": "2026-09-27T14:40:12.491Z",
+        "seconds_to_die": 16
       }
     ],
     "meta": {
@@ -104,22 +104,22 @@
     }
   },
   "manual_retry_response": {
-    "job_id": "job_cee72812be4e4ed1bc5046f60add4ab8",
+    "job_id": "job_e9b0672a46034c8bbc51857e25af07ea",
     "status": "pending",
     "attempts": 3,
     "max_attempts": 5
   },
   "retry_again_status": 404,
   "log_lines": [
-    "2026-09-25T19:52:11.539Z INFO worker-backoff Worker started, concurrency cap: 1",
-    "2026-09-25T19:52:11.543Z INFO worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Claimed job, attempt 1 of 3",
-    "2026-09-25T19:52:11.543Z WARN worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Work failed in 0ms: Simulated permanent failure",
-    "2026-09-25T19:52:11.548Z WARN worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Work failed: Simulated permanent failure. Retry queued, attempt 1 of 3, next attempt in 5.1s (run_at 2026-09-25T19:52:16.637Z)",
-    "2026-09-25T19:52:16.811Z INFO worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Claimed job, attempt 2 of 3",
-    "2026-09-25T19:52:16.811Z WARN worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Work failed in 0ms: Simulated permanent failure",
-    "2026-09-25T19:52:16.815Z WARN worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Work failed: Simulated permanent failure. Retry queued, attempt 2 of 3, next attempt in 9.7s (run_at 2026-09-25T19:52:26.475Z)",
-    "2026-09-25T19:52:26.604Z INFO worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Claimed job, attempt 3 of 3",
-    "2026-09-25T19:52:26.604Z WARN worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Work failed in 0ms: Simulated permanent failure",
-    "2026-09-25T19:52:26.606Z ERROR worker-backoff job_cee72812be4e4ed1bc5046f60add4ab8 always_fails Job dead after 3 attempts, requires manual intervention"
+    "2026-09-27T14:39:56.978Z INFO worker-backoff Worker started, concurrency cap: 1",
+    "2026-09-27T14:39:56.982Z INFO worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Claimed job, attempt 1 of 3",
+    "2026-09-27T14:39:56.983Z WARN worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Work failed in 1ms: Simulated permanent failure",
+    "2026-09-27T14:39:56.988Z WARN worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Work failed: Simulated permanent failure. Retry queued, attempt 1 of 3, next attempt in 5.1s (run_at 2026-09-27T14:40:02.099Z)",
+    "2026-09-27T14:40:02.313Z INFO worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Claimed job, attempt 2 of 3",
+    "2026-09-27T14:40:02.313Z WARN worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Work failed in 0ms: Simulated permanent failure",
+    "2026-09-27T14:40:02.318Z WARN worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Work failed: Simulated permanent failure. Retry queued, attempt 2 of 3, next attempt in 10.0s (run_at 2026-09-27T14:40:12.339Z)",
+    "2026-09-27T14:40:12.490Z INFO worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Claimed job, attempt 3 of 3",
+    "2026-09-27T14:40:12.490Z WARN worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Work failed in 0ms: Simulated permanent failure",
+    "2026-09-27T14:40:12.493Z ERROR worker-backoff job_e9b0672a46034c8bbc51857e25af07ea always_fails Job dead after 3 attempts, requires manual intervention"
   ]
 }

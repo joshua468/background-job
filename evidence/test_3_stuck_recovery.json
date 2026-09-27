@@ -1,67 +1,67 @@
 {
   "stuck_timeout_seconds_configured": 3600,
   "before_kill": {
-    "id": "job_43a437eea39e4e80abb27622a7fca6ec",
+    "id": "job_dcee710bd93843fb8f0809321fa5f616",
     "type": "hang_forever",
     "payload": {},
     "status": "processing",
     "attempts": 0,
     "max_attempts": 5,
     "last_error": null,
-    "run_at": "2026-09-25T19:52:27.004Z",
-    "started_at": "2026-09-25T19:52:27.021Z",
+    "run_at": "2026-09-27T14:40:15.456Z",
+    "started_at": "2026-09-27T14:40:15.675Z",
     "finished_at": null,
     "idempotency_key": "t3_key_1",
-    "created_at": "2026-09-25T19:52:27.004Z",
-    "updated_at": "2026-09-25T19:52:27.021Z"
+    "created_at": "2026-09-27T14:40:15.456Z",
+    "updated_at": "2026-09-27T14:40:15.675Z"
   },
   "after_kill": {
-    "id": "job_43a437eea39e4e80abb27622a7fca6ec",
+    "id": "job_dcee710bd93843fb8f0809321fa5f616",
     "type": "hang_forever",
     "payload": {},
     "status": "processing",
     "attempts": 0,
     "max_attempts": 5,
     "last_error": null,
-    "run_at": "2026-09-25T19:52:27.004Z",
-    "started_at": "2026-09-25T19:52:27.021Z",
+    "run_at": "2026-09-27T14:40:15.456Z",
+    "started_at": "2026-09-27T14:40:15.675Z",
     "finished_at": null,
     "idempotency_key": "t3_key_1",
-    "created_at": "2026-09-25T19:52:27.004Z",
-    "updated_at": "2026-09-25T19:52:27.021Z"
+    "created_at": "2026-09-27T14:40:15.456Z",
+    "updated_at": "2026-09-27T14:40:15.675Z"
   },
   "after_recovery": {
-    "id": "job_43a437eea39e4e80abb27622a7fca6ec",
+    "id": "job_dcee710bd93843fb8f0809321fa5f616",
     "type": "hang_forever",
     "payload": {},
     "status": "pending",
     "attempts": 1,
     "max_attempts": 5,
     "last_error": null,
-    "run_at": "2026-09-25T19:52:28.355Z",
-    "started_at": "2026-09-25T19:52:27.021Z",
+    "run_at": "2026-09-27T14:40:17.236Z",
+    "started_at": "2026-09-27T14:40:15.675Z",
     "finished_at": null,
     "idempotency_key": "t3_key_1",
-    "created_at": "2026-09-25T19:52:27.004Z",
-    "updated_at": "2026-09-25T19:52:28.355Z"
+    "created_at": "2026-09-27T14:40:15.456Z",
+    "updated_at": "2026-09-27T14:40:17.236Z"
   },
   "recovered_count": 1,
   "final": {
-    "id": "job_43a437eea39e4e80abb27622a7fca6ec",
+    "id": "job_dcee710bd93843fb8f0809321fa5f616",
     "type": "hang_forever",
     "payload": {},
     "status": "succeeded",
     "attempts": 1,
     "max_attempts": 5,
     "last_error": null,
-    "run_at": "2026-09-25T19:52:28.355Z",
-    "started_at": "2026-09-25T19:52:30.217Z",
-    "finished_at": "2026-09-25T19:52:30.220Z",
+    "run_at": "2026-09-27T14:40:17.236Z",
+    "started_at": "2026-09-27T14:40:17.399Z",
+    "finished_at": "2026-09-27T14:40:17.631Z",
     "idempotency_key": "t3_key_1",
-    "created_at": "2026-09-25T19:52:27.004Z",
-    "updated_at": "2026-09-25T19:52:30.220Z"
+    "created_at": "2026-09-27T14:40:15.456Z",
+    "updated_at": "2026-09-27T14:40:17.631Z"
   },
   "recovery_log_lines": [
-    "2026-09-25T19:52:30.213Z WARN worker-recovery job_43a437eea39e4e80abb27622a7fca6ec hang_forever Recovered stuck job, was in processing for 3s, now pending (attempt 1)"
+    "2026-09-27T14:40:17.396Z WARN worker-recovery job_dcee710bd93843fb8f0809321fa5f616 hang_forever Recovered stuck job, was in processing for 2s, now pending (attempt 1)"
   ]
 }

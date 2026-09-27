@@ -2,7 +2,7 @@
   "first_page": {
     "jobs": [
       {
-        "id": "job_0ecd8fd41ac84285937ea2d5d3cdf71e",
+        "id": "job_a87682edabc0461b97e15dabd8a29aa2",
         "type": "always_fails",
         "status": "dead",
         "payload": {
@@ -12,14 +12,14 @@
         "attempts": 1,
         "max_attempts": 1,
         "last_error": "boom 2",
-        "created_at": "2026-09-25T19:52:36.142Z",
-        "started_at": "2026-09-25T19:52:36.158Z",
-        "run_at": "2026-09-25T19:52:36.142Z",
-        "finished_at": "2026-09-25T19:52:36.483Z",
+        "created_at": "2026-09-27T14:40:55.093Z",
+        "started_at": "2026-09-27T14:40:55.104Z",
+        "run_at": "2026-09-27T14:40:55.093Z",
+        "finished_at": "2026-09-27T14:40:55.509Z",
         "seconds_to_die": 0
       },
       {
-        "id": "job_d140313649e14409a3c5650c068bb213",
+        "id": "job_80b03348e3bb4f67a5d1b9c6bef0a31b",
         "type": "always_fails",
         "status": "dead",
         "payload": {
@@ -29,10 +29,10 @@
         "attempts": 1,
         "max_attempts": 1,
         "last_error": "boom 1",
-        "created_at": "2026-09-25T19:52:36.138Z",
-        "started_at": "2026-09-25T19:52:36.154Z",
-        "run_at": "2026-09-25T19:52:36.138Z",
-        "finished_at": "2026-09-25T19:52:36.420Z",
+        "created_at": "2026-09-27T14:40:55.088Z",
+        "started_at": "2026-09-27T14:40:55.102Z",
+        "run_at": "2026-09-27T14:40:55.088Z",
+        "finished_at": "2026-09-27T14:40:55.417Z",
         "seconds_to_die": 0
       }
     ],
@@ -46,7 +46,7 @@
   "last_page": {
     "jobs": [
       {
-        "id": "job_939473f9f1e54cc6a2fa6d4e0d0952a6",
+        "id": "job_eb77ce9f1d0646368b5d21e3fd96ce01",
         "type": "always_fails",
         "status": "dead",
         "payload": {
@@ -56,10 +56,10 @@
         "attempts": 1,
         "max_attempts": 1,
         "last_error": "boom 0",
-        "created_at": "2026-09-25T19:52:36.060Z",
-        "started_at": "2026-09-25T19:52:36.151Z",
-        "run_at": "2026-09-25T19:52:36.060Z",
-        "finished_at": "2026-09-25T19:52:36.327Z",
+        "created_at": "2026-09-27T14:40:55.080Z",
+        "started_at": "2026-09-27T14:40:55.099Z",
+        "run_at": "2026-09-27T14:40:55.080Z",
+        "finished_at": "2026-09-27T14:40:55.358Z",
         "seconds_to_die": 0
       }
     ],
@@ -95,5 +95,22 @@
       "code": "INVALID_REQUEST",
       "message": "limit and offset must be integers"
     }
+  },
+  "type_filter": {
+    "applied": "generate_pdf",
+    "matched": 4,
+    "all_of_the_filtered_type": true,
+    "second_page_reachable": 2,
+    "no_match": {
+      "jobs": [],
+      "meta": {
+        "total": 0,
+        "limit": 20,
+        "offset": 0,
+        "has_more": false,
+        "type": "no_such_type"
+      }
+    },
+    "unfiltered_total_unchanged": 7
   }
 }
